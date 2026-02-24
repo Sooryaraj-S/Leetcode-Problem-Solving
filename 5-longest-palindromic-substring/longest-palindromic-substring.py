@@ -1,33 +1,9 @@
-class Solution(object):
-    def longestPalindrome(self, s):
-        n = len(s)
-        if n <= 1:
-            return s
-        
-        # Initialize a 2D table for dynamic programming
-        dp = [[False] * n for _ in range(n)]
-        start, max_len = 0, 1
-        
-        # All single characters are palindromes
-        for i in range(n):
-            dp[i][i] = True
-        
-        # Check for substrings of length 2
-        for i in range(n - 1):
-            if s[i] == s[i + 1]:
-                dp[i][i + 1] = True
-                start = i
-                max_len = 2
-        
-        # Check for substrings of length > 2
-        for length in range(3, n + 1):
-            for i in range(n - length + 1):
-                j = i + length - 1
-                if s[i] == s[j] and dp[i + 1][j - 1]:
-                    dp[i][j] = True
-                    if length > max_len:
-                        start = i
-                        max_len = length
-        
-        return s[start:start + max_len]
-        
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        def check(l, r):
+            while 0 <= l <= r < len(s) and s[l] == s[r]:
+                l -= 1
+                r += 1
+            return s[l + 1:r]
+        pals = [check(i, i) for i in range(len(s))] + [check(i, i + 1) for i in range(len(s) - 1) if s[i] == s[i + 1]]
+        return sorted(pals, key = len)[-1] if pals else ''
