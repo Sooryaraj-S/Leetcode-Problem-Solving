@@ -1,13 +1,9 @@
-class Solution(object):
+class Solution:
     def convert(self, s, numRows):
-        if numRows == 1 or numRows >= len(s):
-            return s  
-
-        res = [""] * numRows  # Initialize rows as empty strings
-
-        for i, char in enumerate(s):
-            pos = i % (2 * numRows - 2)  # Position in the zigzag cycle
-            row = pos if pos < numRows else 2 * numRows - 2 - pos  # Map to correct row
-            res[row] += char  # Append character to the correct row
-
-        return "".join(res)  # Combine all rows into the final output
+        if numRows == 1 or numRows >= len(s): return s
+        row, direction, res = 0, -1, [""] * numRows
+        for char in s:
+            res[row] += char
+            if row == 0 or row == numRows - 1: direction *= -1 
+            row += direction
+        return "".join(res) 
