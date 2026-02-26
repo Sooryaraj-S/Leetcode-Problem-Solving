@@ -1,36 +1,40 @@
 class Solution {
     public List<String> fullJustify(String[] words, int maxWidth) {
-        List<String> result = new ArrayList<>();
+        List<String> res = new ArrayList<>();
+        List<String> line = new ArrayList<>();
+        int len = 0;
         int i = 0;
-        while (i < words.length) {
-            int j = i, len = 0;
-            while (j < words.length && len + words[j].length() + (j - i) <= maxWidth) {
-                len += words[j].length();
-                j++;
-            }
-            int gaps = j - i - 1;
-            int spaces = maxWidth - len;
-            StringBuilder line = new StringBuilder();
+        int n = words.length;
+        
+        while (i < n) {
+            if (len + line.size() + words[i].length() > maxWidth) {
+                int extraSpace = maxWidth - len;
+                int slots = Math.max(1, line.size() - 1);
+                int spaces = extraSpace / slots; 
+                int remainder = extraSpace % slots;
 
-            if (j == words.length || gaps == 0) {
-                for (int k = i; k < j; k++) {
-                    line.append(words[k]);
-                    if (k != j - 1) line.append(" ");
-                }
-                while (line.length() < maxWidth) line.append(" ");
-            } else {
-                int spaceEach = spaces / gaps, extra = spaces % gaps;
-                for (int k = i; k < j; k++) {
-                    line.append(words[k]);
-                    if (k != j - 1) {
-                        int toAdd = spaceEach + (extra-- > 0 ? 1 : 0);
-                        line.append(" ".repeat(toAdd));
+                for (int j = 0; j < slots; j++) {
+                    StringBuilder word = new StringBuilder(line.get(j));
+                    word.append(" ".repeat(spaces));
+                    if (remainder > 0) {
+                        word.append(" ");
+                        remainder--;
                     }
+                    line.set(j, word.toString());
                 }
+                res.add(String.join("", line));
+                line.clear();
+                len = 0;
             }
-            result.add(line.toString());
-            i = j;
+            line.add(words[i]);
+            len += words[i].length();
+            i++;
         }
-        return result;
+
+        String lastLine = String.join(" ", line);
+        int trailSpace = maxWidth - lastLine.length();
+        lastLine += " ".repeat(trailSpace);
+        res.add(lastLine);
+        return res;
     }
 }
